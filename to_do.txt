@@ -1,0 +1,9 @@
+user class
+{
+
+Methods:
+1. Create Account 
+2. Deposit money
+3. withdraw money 
+
+}
