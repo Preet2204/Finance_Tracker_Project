@@ -5,5 +5,9 @@ Methods:
 1. Create Account 
 2. Deposit money
 3. withdraw money 
+4. Check Balance
+5. Obtain transactions
+6. Set budget
+7. Edit budget?? 
 
 }
