@@ -1,8 +1,23 @@
 import java.util.Scanner;
 
-private class User{
+class User{
     private String pass=new String();
-    check 
+    
+    void choice(boolean signup){
+        if(signup){
+            System.out.println("Create Password : ");
+            makeUser();
+        }
+        else{
+            
+        }
+            
+    }
+
+    boolean checkPass(){
+
+    }
+
     void makeUser(){
         Scanner sca = new Scanner();
         String password = sca.nextLine();
@@ -45,12 +60,17 @@ private class User{
 
 
 public class Main {   
+    
     public static void main(String[] args) {
+        User one= new User();
         Scanner s=new Scanner(System.in);
-        // System.out.println("create your password of minimum length 5 consisting of at least one upper case, lower case letter and a number");
-        // String pass=s.nextLine();
-        System.out.println("Create Password : ");
-        one.makeUser();
-        boolean isUser=one.checkPass(pass);
+
+        System.out.println("Do you want to SIGN IN or SIGN UP\nEnter 0 for sign in\nEnter 1 for sing up");
+        int signup=s.nextInt();
+        if(signup==1)
+        one.choice(true);
+        else
+        one.choice(false);
+      
     }
 }
