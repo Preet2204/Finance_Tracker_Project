@@ -1,6 +1,12 @@
 user class
 {
 
+Instance Variables:
+1. Name
+2. Address
+3. Password
+4. 
+
 Methods:
 1. Create Account 
 2. Deposit money
@@ -9,5 +15,6 @@ Methods:
 5. Obtain transactions
 6. Set budget
 7. Edit budget?? 
+8. Check password
 
 }
