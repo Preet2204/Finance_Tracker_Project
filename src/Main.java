@@ -1,10 +1,28 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
-private class User{
+class Users {
+    ArrayList<User> user = new ArrayList<>();
+
+    Users() {
+        Scanner sca = new Scanner(System.in);
+        User temp = new User();
+        System.out.println("Enter User Name: "); 
+        String name = sca.nextLine();                 // Taking User name as input
+        temp.userName = name;
+        System.out.println("Create Password: ");  
+        temp.makeUser();
+        user.add(temp);
+    }
+
+}
+
+class User{
     private String pass=new String();
-    check 
+    String userName = new String();
+    // check 
     void makeUser(){
-        Scanner sca = new Scanner();
+        Scanner sca = new Scanner(System.in);
         String password = sca.nextLine();
         boolean hasUpper=false;
         boolean hasLower=false;
@@ -46,11 +64,18 @@ private class User{
 
 public class Main {   
     public static void main(String[] args) {
-        Scanner s=new Scanner(System.in);
-        // System.out.println("create your password of minimum length 5 consisting of at least one upper case, lower case letter and a number");
+        Scanner s = new Scanner(System.in);
+        System.out.println("Welcome. Press '0' to log in and '1' for Sign Up");
+        int x = s.nextInt();
         // String pass=s.nextLine();
-        System.out.println("Create Password : ");
-        one.makeUser();
-        boolean isUser=one.checkPass(pass);
+
+        if(x == 1){
+            Users one;
+            one = new Users();
+            // one.makeUser();                             // Calling makeUser method.
+            // boolean isUser=one.checkPass(pass);
+        }
+
+
     }
 }
