@@ -63,6 +63,7 @@ class User{
 
 
 public class Main {   
+    
     public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
         System.out.println("Welcome. Press '0' to log in and '1' for Sign Up");
