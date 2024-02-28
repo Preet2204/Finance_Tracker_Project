@@ -44,8 +44,7 @@ private class User{
 }
 
 
-public class Main {
-    User one=new User();
+public class Main {   
     public static void main(String[] args) {
         Scanner s=new Scanner(System.in);
         // System.out.println("create your password of minimum length 5 consisting of at least one upper case, lower case letter and a number");
