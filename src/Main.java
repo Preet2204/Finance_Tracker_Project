@@ -1,21 +1,20 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class Users {
-    ArrayList<User> user = new ArrayList<>();
+// class Users {
+//     ArrayList<User> user = new ArrayList<>();
 
-    Users() {
-        Scanner sca = new Scanner(System.in);
-        User temp = new User();
-        System.out.println("Enter User Name: "); 
-        String name = sca.nextLine();                 // Taking User name as input
-        temp.userName = name;
-        System.out.println("Create Password: ");  
-        temp.makeUser();
-        user.add(temp);
-    }
-
-}
+//     Users() {
+//         Scanner sca = new Scanner(System.in);
+//         User temp = new User();
+//         System.out.println("Enter User Name: "); 
+//         String name = sca.nextLine();                 // Taking User name as input
+//         temp.userName = name;
+//         System.out.println("Create Password: ");  
+//         temp.makeUser();
+//         user.add(temp);
+//     }
+// }
 
 class User{
     private String pass=new String();
@@ -23,6 +22,9 @@ class User{
     // check 
     void makeUser(){
         Scanner sca = new Scanner(System.in);
+        // System.out.println("Enter User Name: ");
+        // userName = sca.nextLine();
+        // System.out.println("Create Password: ");
         String password = sca.nextLine();
         boolean hasUpper=false;
         boolean hasLower=false;
@@ -71,9 +73,14 @@ public class Main {
         // String pass=s.nextLine();
 
         if(x == 1){
-            Users one;
-            one = new Users();
-            // one.makeUser();                             // Calling makeUser method.
+            User one = new User();
+            Scanner sca = new Scanner(System.in);
+            System.out.println("Enter User Name: ");
+            one.userName = sca.nextLine();
+            System.out.println("Create Password: ");
+            // String password = sca.nextLine();
+            one = new User();
+            one.makeUser();                             // Calling makeUser method.
             // boolean isUser=one.checkPass(pass);
         }
 
