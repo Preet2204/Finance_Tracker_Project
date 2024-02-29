@@ -1,26 +1,39 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class Users {
-    ArrayList<User> user = new ArrayList<>();
+// class Users {
+//     ArrayList<User> user = new ArrayList<>();
 
-    Users() {
-        Scanner sca = new Scanner(System.in);
-        User temp = new User();
-        System.out.println("Enter User Name: "); 
-        String name = sca.nextLine();                 // Taking User name as input
-        temp.userName = name;
-        System.out.println("Create Password: ");  
-        temp.makeUser();
-        user.add(temp);
-    }
-
-}
+//     Users() {
+//         Scanner sca = new Scanner(System.in);
+//         User temp = new User();
+//         System.out.println("Enter User Name: "); 
+//         String name = sca.nextLine();                 // Taking User name as input
+//         temp.userName = name;
+//         System.out.println("Create Password: ");  
+//         temp.makeUser();
+//         user.add(temp);
+//     }
+// }
 
 class User{
+
     private String pass=new String();
-    String userName = new String();
-    // check 
+    private String userName = new String();
+    
+    void makeChoice(int ch)
+    {
+        
+    }
+
+    void setUserName(String username){
+        userName=username;
+    }
+    String getUserName()
+    {
+        return userName;
+    }
+
     void makeUser(){
         Scanner sca = new Scanner(System.in);
         String password = sca.nextLine();
@@ -63,19 +76,30 @@ class User{
 
 
 public class Main {   
-    
+    static User one = new User();
+    static Scanner sca = new Scanner(System.in);
     public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        System.out.println("Welcome. Press '0' to log in and '1' for Sign Up");
-        int x = s.nextInt();
-        // String pass=s.nextLine();
-
-        if(x == 1){
-            Users one;
-            one = new Users();
-            // one.makeUser();                             // Calling makeUser method.
-            // boolean isUser=one.checkPass(pass);
+        System.out.println("Welcome. Please Sign Up to continue!");       
+        System.out.println("Enter User Name: ");
+        one.setUserName(sca.nextLine());
+        System.out.println("Create Password: ");
+        one.makeUser();                             // Calling makeUser method.
+        printFunctions();
+        
         }
+
+    static void printFunctions()
+    { 
+        System.out.println("Welcome" + one.getUserName());
+        System.out.println("The following functionalities are available for your use:");
+        System.out.println("1. Accounts and balances");
+        System.out.println("2. Tracking your Transactions");
+        System.out.println("3. Budgeting");
+        System.out.println("4. Debt Management");
+        System.out.println("Enter the appropriate Digit to proceed further");
+        int ch= sca.nextInt();
+
+
 
 
     }
