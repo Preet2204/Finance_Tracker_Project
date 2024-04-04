@@ -18,19 +18,26 @@ import java.util.Scanner;
 
 class User{
 
-    private String pass=new String();
-    private String userName = new String();
-    
-    void makeChoice(int ch)
+    protected String pass=new String();
+    protected String userName = new String();
+
+    void makeChoice1(int ch)
     {
+        switch (ch) {
+            case 1:
+                
+                break;
         
+            default:
+                break;
+        }
     }
 
-    void setUserName(String username){
-        userName=username;
+    User(String usernaam) {
+        userName=usernaam;
     }
-    String getUserName()
-    {
+
+    String getUserName() {
         return userName;
     }
 
@@ -40,7 +47,7 @@ class User{
         boolean hasUpper=false;
         boolean hasLower=false;
         boolean hasDigit=false;
-        if(password.length()>=5)
+        if(password.length()>=5)                            //password Strength Checker (Length >= 5, Atleast one uppercase and lowercase)
         {
             for(int i=0;i<password.length();i++)
             {
@@ -74,19 +81,60 @@ class User{
     }
 }
 
+class Account extends User{
+    Scanner sca = new Scanner(System.in);
+
+    double balance;
+    float interestRate;
+
+    Account(String usernaam) {
+        super(usernaam);
+    }
+
+    void makeAccount() {
+        System.out.println("The following Accounts are available for your use: ");
+        System.out.println("1. Savings Account");
+        System.out.println("2. Checkings Account");
+        System.out.println("Enter the appropriate Digit to proceed further");
+        int ch = sca.nextInt();
+        switch (ch) {
+            case 1:
+                
+                break;
+            case 2:
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    
+}
+
+class Savings extends Account{
+
+    Savings(String usernaam) {
+        super(usernaam);
+    }
+    
+}
 
 public class Main {   
-    static User one = new User();
+    static User one;
     static Scanner sca = new Scanner(System.in);
     public static void main(String[] args) {
         System.out.println("Welcome. Please Sign Up to continue!");       
         System.out.println("Enter User Name: ");
-        one.setUserName(sca.nextLine());
+        one = new User(sca.nextLine());
         System.out.println("Create Password: ");
         one.makeUser();                             // Calling makeUser method.
         printFunctions();
         
-        }
+    }
+
+    //Savings obj = new Savings();
+    //obj.balance;
 
     static void printFunctions()
     { 
@@ -98,9 +146,6 @@ public class Main {
         System.out.println("4. Debt Management");
         System.out.println("Enter the appropriate Digit to proceed further");
         int ch= sca.nextInt();
-
-
-
-
+        one.makeChoice1(ch);
     }
 }
