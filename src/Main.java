@@ -1,17 +1,4 @@
-import java.util.ArrayList;
-import java.util.Scanner;
-
-// class Users {
-//     ArrayList<User> user = new ArrayList<>();
-
-//     Users() {
-//         Scanner sca = new Scanner(System.in);
-//         User temp = new User();
-//         System.out.println("Enter User Name: "); 
-//         String name = sca.nextLine();                 // Taking User name as input
-//         temp.userName = name;
-//         System.out.println("Create Password: ");  
-//         temp.makeUser();
+mmakeUser();
 //         user.add(temp);
 //     }
 // }
