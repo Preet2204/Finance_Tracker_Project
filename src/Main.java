@@ -1,7 +1,4 @@
-mmakeUser();
-//         user.add(temp);
-//     }
-// }
+import java.util.*;
 
 class User{
     Scanner sca = new Scanner(System.in);
@@ -29,43 +26,47 @@ class User{
     }
 
     void makeUser(){
-        System.out.println("Enter User Name: ");
-        setUserName(sca.nextLine());
-        System.out.println("Create Password: ");
-        String password = sca.nextLine();
-        boolean hasUpper=false;
-        boolean hasLower=false;
-        boolean hasDigit=false;
-        if(password.length()>=5)
-        {
-            for(int i=0;i<password.length();i++)
+        while(true) {
+            System.out.println("Enter User Name: ");
+            setUserName(sca.nextLine());
+            System.out.println("Create Password: ");
+            String password = sca.nextLine();
+            boolean hasUpper=false;
+            boolean hasLower=false;
+            boolean hasDigit=false;
+            if(password.length()>=5)
             {
-                char ch=password.charAt(i);
-                
-                if(ch>='a' && ch<='z'){
-                    hasLower=true;
+                for(int i=0;i<password.length();i++)
+                {
+                    char ch=password.charAt(i);
+                    
+                    if(ch>='a' && ch<='z'){
+                        hasLower=true;
+                    }
+                    else if(ch>='A' && ch<='Z'){
+                        hasUpper=true;
+                    }
+                    else if(ch>='0' && ch<='9'){
+                        hasDigit=true;
+                    }
                 }
-                else if(ch>='A' && ch<='Z'){
-                    hasUpper=true;
+                if(hasUpper && hasDigit && hasLower) {
+                    setPass(password);
+                    break;
                 }
-                else if(ch>='0' && ch<='9'){
-                    hasDigit=true;
+                else{
+                    System.out.println("Invalid Password");
+                    System.out.println("Password Must have atleast 1 UpperCase, atleast 1 Lower Case and atleast 1 Digit.");
+                    System.out.println("Enter another Password: ");
+                    continue;
                 }
             }
-            if(hasUpper && hasDigit && hasLower)
-            setPass(password);
             else{
                 System.out.println("Invalid Password");
-                System.out.println("Password Must have atleast 1 UpperCase, atleast 1 Lower Case and atleast 1 Digit.");
+                System.out.println("Password Must have atleast 5 Characters.");
                 System.out.println("Enter another Password: ");
-                this.makeUser();
+                continue;
             }
-        }
-        else{
-            System.out.println("Invalid Password");
-            System.out.println("Password Must have atleast 5 Characters.");
-            System.out.println("Enter another Password: ");
-            this.makeUser();
         }
     }
 }
