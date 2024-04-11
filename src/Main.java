@@ -4,31 +4,33 @@ class User{
     Scanner sca = new Scanner(System.in);
     private String pass=new String();
     private String userName = new String();
-    
-    void makeChoice(int ch)
-    {
+
+    void makeChoice(int ch) {
         
     }
 
-    void setUserName(String username){
+    void setUserName(String username) {
         this.userName=username;
     }
-    String getUserName()
-    {
+
+    String getUserName() {
         return userName;
+
     }
-    void setPass(String password){
+
+    void setPass(String password) {
         this.pass=password;
     }
-    String getPass()
-    {
+
+    String getPass() {
         return pass;
     }
 
-    void makeUser(){
+
+
+    void makeUser(String username){
         while(true) {
-            System.out.println("Enter User Name: ");
-            setUserName(sca.nextLine());
+            setUserName(username);
             System.out.println("Create Password: ");
             String password = sca.nextLine();
             boolean hasUpper=false;
@@ -57,7 +59,7 @@ class User{
                 else{
                     System.out.println("Invalid Password");
                     System.out.println("Password Must have atleast 1 UpperCase, atleast 1 Lower Case and atleast 1 Digit.");
-                    System.out.println("Enter another Password: ");
+                    System.out.println("Enter another Password");
                     continue;
                 }
             }
@@ -71,29 +73,41 @@ class User{
     }
 }
 
+class Accounts extends User{
+
+    
+
+}
 
 public class Main {   
-    static ArrayList<User> users=new ArrayList<>();
+    static ArrayList<User> users=new ArrayList<>();         //ArrayList for all users.
     static Scanner sca = new Scanner(System.in);
     static int ind = 0;
-    static void signup(ArrayList<User> use) {
+    static void signup() {
         boolean userExists=false;
-        for(int i=0;i<use.size();i++)
+        
+        System.out.println("Enter User Name: ");
+    
+        String username=sca.nextLine();
+        for(int i=0;i<users.size();i++)
         {
-            System.out.println("Enter User Name: ");
-            String username=sca.nextLine();
-            if(use.get(i).getUserName()==username)
+            
+            if(users.get(i).getUserName()==username)
             {
                 userExists=true;
                 break;
             }
         }
+
         if(userExists){
             System.out.println("UserName already exists, enter a new username!");
-            signup(use);
+            signup();
         }
-        use.add(new User());
-        use.get(ind++).makeUser();
+        else{
+            users.add(new User());
+            users.get(ind++).makeUser(username);
+        }
+        return;
     }
 
     static void signin(ArrayList<User> use) {
@@ -112,7 +126,7 @@ public class Main {
         if(isUser) {
             System.out.println("Enter Password: ");
             signpass = sca.nextLine();
-            
+
             if(signpass == use.get(i).getPass()) {
                 System.out.println("Login Succesfull");
                 printFunctions();
@@ -124,14 +138,17 @@ public class Main {
         }
     }
     public static void main(String[] args) {
-        
+
         System.out.println("Welcome. Press 0 to Sign Up or 1 to Sign In!");
         int signchoice=sca.nextInt();
-        if(signchoice == 0) signup(users);
+        sca.nextLine();
+        if(signchoice == 0) signup();
         else if(signchoice==1) {
-            System.out.println("enter username");
-            String username=new String();    
+            System.out.println("Enter Username: ");
+            String username=new String();
         }
+
+        printFunctions();
         
     }
 
@@ -143,6 +160,8 @@ public class Main {
         System.out.println("2. Tracking your Transactions");
         System.out.println("3. Budgeting");
         System.out.println("4. Debt Management");
+        System.out.println("5. Log Out");
+        System.out.println("6. Exit");
         System.out.println("Enter the appropriate Digit to proceed further");
         int ch= sca.nextInt();
     }
