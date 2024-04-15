@@ -6,6 +6,78 @@ class User{
     private String pass=new String();
     private String userName = new String();
 
+    void makeAccount(){
+        System.out.println("What kind of account do you want to create?");
+        System.out.println("1. Savings ");
+        System.out.println("2. Checking");
+        System.out.println("3. Fixed Deposit");
+        System.out.println("4. Credit Card ");
+        Accounts a=new Savings();
+        boolean UserNotCoop=true;
+        while(UserNotCoop)
+        {
+            UserNotCoop=false;
+            switch(sca.nextInt())
+            {
+                case 1 -> a= new Savings();
+                case 2 -> a= new Checking();
+                case 3 -> a= new FD();
+                case 4 -> a= new Credit_Card();
+                default -> {
+                    UserNotCoop=true;
+                    System.out.println("enter given choices only");
+                }
+            };
+        }
+        account_list.add(a);
+        boolean AccNoExists=true;
+        String tempAccNo="";
+        while(AccNoExists)
+        {
+            AccNoExists=false;
+            System.out.println("enter unique account number");
+            tempAccNo=sca.next();
+            for(int i=0;i<account_list.size();i++)
+            {
+                if(account_list.get(i).account_no==tempAccNo)
+                {
+                    System.out.println("Account number already refers to another account");
+                    AccNoExists=true;
+                    break;
+                }
+            }
+        }
+        a.account_no=tempAccNo;
+        System.out.println("enter current balance");
+        a.balance=sca.nextDouble();
+        System.out.println("You have successfully created an account. You have been redirected to the main menu!");
+    }
+
+    void AccountFunctions()
+    {
+        while(true)
+        {
+            System.out.println("Enter the account number of the account you wish to choose");
+            String tempString=sca.next();
+            int i=0
+            for(;i<=account_list.size()-1;i++)
+            {
+                if(tempString==account_list.get(i).account_no)
+                break;
+            }
+            if(i<account_list.size())
+            {
+                account_list.get(i).printAccFunc();
+                break;
+            }
+            else{
+                System.out.println("Invaid Account Number.");
+                continue;
+            }
+        }
+
+    }
+
     void makeChoice(int ch) {
         switch(ch)
         {
@@ -15,11 +87,17 @@ class User{
                         System.out.println("2. Perform actions on already existing account");
                         switch(sca.nextInt())
                         {
-                            case 1 -> account_list.add(Accounts)
+                            case 1 -> makeAccount();
+                            case 2 -> {
+                                AccountFunctions();
+                            }
+                                    
                         };
-                        }
+                    }
         };
     }
+
+
 
     void setUserName(String username) {
         this.userName=username;
@@ -82,6 +160,7 @@ class User{
                 continue;
             }
         }
+        return;
     }
 }
 
@@ -94,20 +173,26 @@ abstract class Accounts{
     {
         balance+=amount;
     }
-    abstract void withdraw(double amount);
-    abstract double getBalance();
-    abstract void transfer(double amount, String destination_acc_no);
-    abstract void getTransactionHistory();
-    abstract void addTransaction();
-    abstract void calculateInterest();
+    void withdraw(double amount)
+    {
+        balance-=amount;
+    }
+    double getBalance()
+    {
+        return balance;
+    }
+    abstract void printAccFunc();
+    // abstract void transfer(double amount, String destination_acc_no);
+    // abstract void getTransactionHistory();
+    // abstract void addTransaction();
+    // abstract void calculateInterest();
 }
 
 class Savings extends Accounts{
-    interest=10.0;
-    balance=0.0;
-
-    @Override
-    void deposit(double amount)
+    
+    void printAccFunc() {
+        
+    }
 
 }
 
@@ -194,7 +279,7 @@ public class Main {
         sca.nextLine();
         if(signchoice == 0) signup();
         else if(signchoice==1) signin();
-        
+        printFunctions();
         
     }
 
