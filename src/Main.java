@@ -6,7 +6,8 @@ class User{
     private String pass=new String();
     private String userName = new String();
 
-    void makeAccount(){
+    void makeAccount()
+    {
         System.out.println("What kind of account do you want to create?");
         System.out.println("1. Savings ");
         System.out.println("2. Checking");
@@ -51,6 +52,7 @@ class User{
         System.out.println("enter current balance");
         a.balance=sca.nextDouble();
         System.out.println("You have successfully created an account. You have been redirected to the main menu!");
+        this.makeChoice(Main.printFunctions());
     }
 
     void AccountFunctions()
@@ -59,11 +61,10 @@ class User{
         {
             System.out.println("Enter the account number of the account you wish to choose");
             String tempString=sca.next();
-            int i=0
+            int i=0;
             for(;i<=account_list.size()-1;i++)
             {
-                if(tempString==account_list.get(i).account_no)
-                break;
+                if(tempString.equals(account_list.get(i).account_no)) break;
             }
             if(i<account_list.size())
             {
@@ -78,48 +79,61 @@ class User{
 
     }
 
-    void makeChoice(int ch) {
+    void makeChoice(int ch)
+    {
         switch(ch)
         {
             case 1 ->{ 
-                        System.out.println("What would you like to do");
-                        System.out.println("1. Add an account");
-                        System.out.println("2. Perform actions on already existing account");
-                        switch(sca.nextInt())
-                        {
-                            case 1 -> makeAccount();
-                            case 2 -> {
-                                AccountFunctions();
-                            }
-                                    
-                        };
-                    }
+                boolean loop = true;
+                while(loop)
+                {
+                    System.out.println("What would you like to do");
+                    System.out.println("1. Add an account");
+                    System.out.println("2. Perform actions on already existing account");
+                    loop = false;
+                    switch(sca.nextInt())
+                    {
+                        case 1 -> {
+                            makeAccount();
+                        }
+                        case 2 -> {
+                            AccountFunctions();
+                        }
+                        default -> loop = true;                                        
+                    };
+                }
+            }
+            case 2 ->{
+                        
+            }
         };
     }
-
-
 
     void setUserName(String username) {
         this.userName=username;
     }
 
-    String getUserName() {
+    String getUserName()
+    {
         return userName;
-
     }
 
-    void setPass(String password) {
+    void setPass(String password)
+    {
         this.pass=password;
     }
 
-    String getPass() {
+    String getPass()
+    {
         return pass;
     }
 
 
 
-    void makeUser(String username){
-        while(true) {
+    void makeUser(String username)
+    {
+        while(true)
+        {
             setUserName(username);
             System.out.println("Create Password: ");
             String password = sca.nextLine();
@@ -132,17 +146,18 @@ class User{
                 {
                     char ch=password.charAt(i);
                     
-                    if(ch>='a' && ch<='z'){
+                    if(ch >= 'a' && ch <= 'z'){
                         hasLower=true;
                     }
-                    else if(ch>='A' && ch<='Z'){
+                    else if(ch >= 'A' && ch <= 'Z'){
                         hasUpper=true;
                     }
-                    else if(ch>='0' && ch<='9'){
+                    else if(ch >= '0' && ch <= '9'){
                         hasDigit=true;
                     }
                 }
-                if(hasUpper && hasDigit && hasLower) {
+                if(hasUpper && hasDigit && hasLower)
+                {
                     setPass(password);
                     break;
                 }
@@ -164,111 +179,200 @@ class User{
     }
 }
 
-abstract class Accounts{
+abstract class Accounts
+{
+    double minBalance=0.0;
     double balance=0.0;
     double interest;
     String account_no;
 
     void deposit(double amount)
     {
-        balance+=amount;
+        if(amount>0)
+        {
+            balance += amount;
+        }
+        else
+        {
+            System.out.println("the entered amount to withdrawn must be positive");
+            this.printAccFunc();
+        }
     }
-    void withdraw(double amount)
-    {
-        balance-=amount;
-    }
+
+    abstract void withdraw(double amount);
+   
     double getBalance()
     {
         return balance;
     }
-    abstract void printAccFunc();
+    void printAccFunc(){
+        System.out.println("The following are the functions you can perform on the selected account");
+        System.out.println("1. Deposit money in Account.");
+        System.out.println("2. Withdraw money in Account.");
+        System.out.println("3. Print Balance of Account.");
+        System.out.println("Choose another account");   
+    }
+    protected void common_funcall(int inp){
+        switch(inp)
+        {
+            case 1 -> {
+                System.out.println("enter the amount to be deposited");
+                this.deposit(Main.sca.nextDouble());
+            }
+            case 2 -> {
+                System.out.println("enter the amount to be withdrawn");
+                this.withdraw(Main.sca.nextDouble());
+            }
+        }   
+    }
     // abstract void transfer(double amount, String destination_acc_no);
     // abstract void getTransactionHistory();
     // abstract void addTransaction();
     // abstract void calculateInterest();
 }
 
-class Savings extends Accounts{
+class Savings extends Accounts
+{
+
+    double minBalance=2000.0;
+    double interest = 3.5;
+
+    void printAccFunc() {
+        super.printAccFunc();
+        System.out.println("Enter the appropriate choice");
+        super.common_funcall(Main.sca.nextInt());
+
+    }
+    void withdraw(double amount)
+    {
+        if((balance-amount)<0)
+        {
+            System.out.println("AAP UTNE AMIR NAHI HO");
+            this.printAccFunc();
+        }
+        else if((balance-amount)<minBalance)
+        {
+            System.out.println("Warning! The amount withstanding falls below minimum balance required (Rs.2000), \n If you wish to continue with the withdrawal, you will be charged Rs.500. \n The maximum amount you can withdraw is "+ (balance-minBalance));
+            System.out.println("Enter 0 to continue with this withdrawal and 1 to discontinue the withdrawal");
+            int choice=Main.sca.nextInt();
+            if(choice==0)
+            {
+                balance-=amount;
+            }
+            else if(choice==1)
+            {
+                this.printAccFunc();
+            }
+        }
+
+    }
     
+
+}
+
+class Checking extends Accounts
+{
+
     void printAccFunc() {
         
     }
 
-}
-
-class Checking extends Accounts{
+    void withdraw(double amount) {}
 
 }
 
-class FD extends Accounts{
+class FD extends Accounts
+{
 
+
+    void printAccFunc() {
+        
+    }
+    void withdraw(double amount) {}
 }
 
-class Credit_Card extends Accounts{
+class Credit_Card extends Accounts
+{
 
+
+    void printAccFunc() {
+        
+    }
+    void withdraw(double amount) {}
 }
 
-public class Main {   
+public class Main
+{   
     static ArrayList<User> users=new ArrayList<>();         //ArrayList for all users.
     static Scanner sca = new Scanner(System.in);
-    static void signup() {
-        boolean userExists=false;
-        
-        System.out.println("Enter User Name: ");
-    
-        String username=sca.nextLine();
-        for(int i=0;i<users.size();i++)
-        {
-            
-            if(users.get(i).getUserName()==username)
+    static void signup()
+    {
+        while(true){
+            boolean userExists=false;
+
+            System.out.println("Enter User Name: ");
+
+            String username=sca.nextLine();
+            for(int i = 0;i<users.size();i++)
             {
-                userExists=true;
+                
+                if(users.get(i).getUserName()==username)
+                {
+                    userExists=true;
+                    break;
+                }
+            }
+
+            if(userExists)
+            {
+                System.out.println("UserName already exists, enter a new username!");
+                continue;
+            }
+            else{
+                users.add(new User());
+                users.get(users.size()-1).makeUser(username);
+                users.get(users.size()-1).makeChoice(printFunctions());
                 break;
             }
-        }
-
-        if(userExists){
-            System.out.println("UserName already exists, enter a new username!");
-            signup();
-        }
-        else{
-            users.add(new User());
-            users.get(users.size()-1).makeUser(username);
-            users.get(users.size()-1).makeChoice(printFunctions());
         }
         return;
     }
 
-    static void signin(){
-        System.out.println("Enter User name: ");
-        String signuser = sca.nextLine();
-        boolean isUser = false;
-        int i;
-        for(i = 0; i < users.size(); i++) {
-            if(signuser == users.get(i).getUserName()) {
-                isUser = true;
-                break;
-            }
-        }
-
-        String signpass;
-        if(isUser) {
-            System.out.println("Enter Password: ");
-            signpass = sca.nextLine();
-
-            if(signpass == users.get(i).getPass()) {
-                System.out.println("Login Succesfull");
-                users.get(i).makeChoice(printFunctions());
-            }else {
-                System.out.println("Wrong Password");
-                System.out.println("Try Again");
-                signin();
-            }
-        }
-        else
+    static void signin()
+    {
+        while(true)
         {
-            System.out.println("entered username doesnt exist. Please try again");
-            signin();
+            System.out.println("Enter User name: ");
+            String signuser = sca.nextLine();
+            boolean isUser = false;
+            int i;
+            for(i = 0; i < users.size(); i++) {
+                if(signuser == users.get(i).getUserName()) {
+                    isUser = true;
+                    break;
+                }
+            }
+
+            String signpass;
+            if(isUser) {
+                System.out.println("Enter Password: ");
+                signpass = sca.nextLine();
+
+                if(signpass == users.get(i).getPass()) {
+                    System.out.println("Login Succesfull");
+                    users.get(i).makeChoice(printFunctions());
+                    break;
+                }else {
+                    System.out.println("Wrong Password");
+                    System.out.println("Try Again");
+                    continue;
+                }
+            }
+            else
+            {
+                System.out.println("entered username doesnt exist. Please try again");
+                continue;
+            }
         }
         return;
     }
@@ -278,8 +382,8 @@ public class Main {
         int signchoice=sca.nextInt();
         sca.nextLine();
         if(signchoice == 0) signup();
-        else if(signchoice==1) signin();
-        printFunctions();
+        else if(signchoice == 1) signin();
+        // printFunctions();
         
     }
 
@@ -288,13 +392,12 @@ public class Main {
         System.out.println("Welcome");
         System.out.println("The following functionalities are available for your use:");
         System.out.println("1. Manage Accounts");
-        System.out.println("2. Tracking your Transactions");
-        System.out.println("3. Budgeting");
-        System.out.println("4. Debt Management");
-        System.out.println("5. Log Out");
-        System.out.println("6. Exit");
+        System.out.println("2. Budgeting");
+        System.out.println("3. Debt Management");
+        System.out.println("4. Log Out");
+        System.out.println("5. Exit");
         System.out.println("Enter the appropriate Digit to proceed further");
-        int ch= sca.nextInt();
+        int ch = sca.nextInt();
         return ch;
     }
 }
