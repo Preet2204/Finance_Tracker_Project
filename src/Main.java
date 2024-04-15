@@ -1,12 +1,24 @@
 import java.util.*;
 
 class User{
+    ArrayList <Accounts> account_list=new ArrayList<>();
     Scanner sca = new Scanner(System.in);
     private String pass=new String();
     private String userName = new String();
 
     void makeChoice(int ch) {
-        git
+        switch(ch)
+        {
+            case 1 ->{ 
+                        System.out.println("What would you like to do");
+                        System.out.println("1. Add an account");
+                        System.out.println("2. Perform actions on already existing account");
+                        switch(sca.nextInt())
+                        {
+                            case 1 -> account_list.add(Accounts)
+                        };
+                        }
+        };
     }
 
     void setUserName(String username) {
@@ -73,16 +85,47 @@ class User{
     }
 }
 
-class Accounts extends User{
+abstract class Accounts{
+    double balance=0.0;
+    double interest;
+    String account_no;
 
-    
+    void deposit(double amount)
+    {
+        balance+=amount;
+    }
+    abstract void withdraw(double amount);
+    abstract double getBalance();
+    abstract void transfer(double amount, String destination_acc_no);
+    abstract void getTransactionHistory();
+    abstract void addTransaction();
+    abstract void calculateInterest();
+}
+
+class Savings extends Accounts{
+    interest=10.0;
+    balance=0.0;
+
+    @Override
+    void deposit(double amount)
+
+}
+
+class Checking extends Accounts{
+
+}
+
+class FD extends Accounts{
+
+}
+
+class Credit_Card extends Accounts{
 
 }
 
 public class Main {   
     static ArrayList<User> users=new ArrayList<>();         //ArrayList for all users.
     static Scanner sca = new Scanner(System.in);
-    static int ind = 0;
     static void signup() {
         boolean userExists=false;
         
@@ -105,18 +148,19 @@ public class Main {
         }
         else{
             users.add(new User());
-            users.get(ind++).makeUser(username);
+            users.get(users.size()-1).makeUser(username);
+            users.get(users.size()-1).makeChoice(printFunctions());
         }
         return;
     }
 
-    static void signin(ArrayList<User> use) {
+    static void signin(){
         System.out.println("Enter User name: ");
         String signuser = sca.nextLine();
         boolean isUser = false;
         int i;
-        for(i = 0; i < ind; i++) {
-            if(signuser == use.get(i).getUserName()) {
+        for(i = 0; i < users.size(); i++) {
+            if(signuser == users.get(i).getUserName()) {
                 isUser = true;
                 break;
             }
@@ -127,15 +171,21 @@ public class Main {
             System.out.println("Enter Password: ");
             signpass = sca.nextLine();
 
-            if(signpass == use.get(i).getPass()) {
+            if(signpass == users.get(i).getPass()) {
                 System.out.println("Login Succesfull");
-                printFunctions();
+                users.get(i).makeChoice(printFunctions());
             }else {
                 System.out.println("Wrong Password");
                 System.out.println("Try Again");
-                signin(use);
+                signin();
             }
         }
+        else
+        {
+            System.out.println("entered username doesnt exist. Please try again");
+            signin();
+        }
+        return;
     }
     public static void main(String[] args) {
 
@@ -143,20 +193,16 @@ public class Main {
         int signchoice=sca.nextInt();
         sca.nextLine();
         if(signchoice == 0) signup();
-        else if(signchoice==1) {
-            System.out.println("Enter Username: ");
-            String username=new String();
-        }
-
-        printFunctions();
+        else if(signchoice==1) signin();
+        
         
     }
 
-    static void printFunctions()
+    static int printFunctions()
     { 
         System.out.println("Welcome");
         System.out.println("The following functionalities are available for your use:");
-        System.out.println("1. Accounts and balances");
+        System.out.println("1. Manage Accounts");
         System.out.println("2. Tracking your Transactions");
         System.out.println("3. Budgeting");
         System.out.println("4. Debt Management");
@@ -164,5 +210,6 @@ public class Main {
         System.out.println("6. Exit");
         System.out.println("Enter the appropriate Digit to proceed further");
         int ch= sca.nextInt();
+        return ch;
     }
 }
