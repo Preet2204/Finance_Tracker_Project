@@ -1,6 +1,5 @@
+import java.time.LocalDateTime;
 import java.util.*;
-
-import javax.sound.sampled.SourceDataLine;
 
 class User{
     ArrayList <Accounts> account_list=new ArrayList<>();
@@ -27,7 +26,7 @@ class User{
                 case 2 -> a= new Checking();
                 case 3 -> a= new FD();
                 case 4 -> a= new Credit_Card();
-                case 5 -> {}
+                case 5 -> {return;}
                 default -> {
                     UserNotCoop=true;
                     System.out.println("Enter given choices only");
@@ -109,7 +108,7 @@ class User{
                         case 2 -> {
                             AccountFunctions();
                         }
-                        case 3 -> {}
+                        case 3 -> {return;}
                         default -> {
                             System.out.println("Invalid Number. Enter Again.");
                             loop = true; 
@@ -195,9 +194,9 @@ class User{
 
 abstract class Accounts
 {
-    // double minBalance=0.0;
-    // double balance=0.0;
-    // double interest;
+    double minBalance=0.0;
+    double balance=0.0;
+    double interest;
     String account_no;
 
     void deposit(double amount)
@@ -232,15 +231,15 @@ abstract class Accounts
         switch(inp)
         {
             case 1 -> {
-                System.out.println("enter the amount to be deposited");
+                System.out.println("Enter the amount to be Deposited");
                 this.deposit(Main.sca.nextDouble());
             }
             case 2 -> {
-                System.out.println("enter the amount to be withdrawn");
+                System.out.println("Enter the amount to be Withdrawn");
                 this.withdraw(Main.sca.nextDouble());
             }
             case 3 -> {
-                System.out.println("your current balance is "+getBalance());
+                System.out.println("Your current Balance is "+getBalance());
                 this.printAccFunc();
             }
             case 4 -> {
@@ -321,6 +320,27 @@ class Credit_Card extends Accounts
         
     }
     void withdraw(double amount) {}
+}
+
+class Transaction {
+    String time;
+    String amount;
+    String balance;
+    String accountno;
+    boolean withtrue;
+
+    Transaction(String amount, String balance, String accountno, boolean withtrue) {
+        
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+        LocalDateTime now = LocalDateTime.now();  
+        this.time = now.format(dtf);
+
+        this.amount = amount;
+        this.balance = balance;
+        this.accountno = accountno;
+        this.withtrue = withtrue;
+    }
+
 }
 
 public class Main
