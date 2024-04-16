@@ -1,5 +1,7 @@
 import java.util.*;
 
+import javax.sound.sampled.SourceDataLine;
+
 class User{
     ArrayList <Accounts> account_list=new ArrayList<>();
     Scanner sca = new Scanner(System.in);
@@ -13,6 +15,7 @@ class User{
         System.out.println("2. Checking");
         System.out.println("3. Fixed Deposit");
         System.out.println("4. Credit Card ");
+        System.out.println("5. Go Back to Main Menu");
         Accounts a=new Savings();
         boolean UserNotCoop=true;
         while(UserNotCoop)
@@ -24,9 +27,10 @@ class User{
                 case 2 -> a= new Checking();
                 case 3 -> a= new FD();
                 case 4 -> a= new Credit_Card();
+                case 5 -> {}
                 default -> {
                     UserNotCoop=true;
-                    System.out.println("enter given choices only");
+                    System.out.println("Enter given choices only");
                 }
             };
         }
@@ -36,7 +40,7 @@ class User{
         while(AccNoExists)
         {
             AccNoExists=false;
-            System.out.println("enter unique account number");
+            System.out.println("Enter Unique Account Number");
             tempAccNo=sca.next();
             for(int i=0;i<account_list.size();i++)
             {
@@ -49,7 +53,7 @@ class User{
             }
         }
         a.account_no=tempAccNo;
-        System.out.println("enter current balance");
+        System.out.println("Enter Current Balance");
         a.balance=sca.nextDouble();
         System.out.println("You have successfully created an account. You have been redirected to the main menu!");
         this.makeChoice(Main.printFunctions());
@@ -59,9 +63,14 @@ class User{
     {
         while(true)
         {
-            System.out.println("Enter the account number of the account you wish to choose");
+            System.out.println("Enter the account number of the account you wish to choose (enter -1 to go back)");
             String tempString=sca.next();
             int i=0;
+            if(tempString.equals("-1"))
+            {
+                makeChoice(1);
+                break;
+            }
             for(;i<=account_list.size()-1;i++)
             {
                 if(tempString.equals(account_list.get(i).account_no)) break;
@@ -90,6 +99,7 @@ class User{
                     System.out.println("What would you like to do");
                     System.out.println("1. Add an account");
                     System.out.println("2. Perform actions on already existing account");
+                    System.out.println("3. Go Back to Main Menu");
                     loop = false;
                     switch(sca.nextInt())
                     {
@@ -99,7 +109,11 @@ class User{
                         case 2 -> {
                             AccountFunctions();
                         }
-                        default -> loop = true;                                        
+                        case 3 -> {}
+                        default -> {
+                            System.out.println("Invalid Number. Enter Again.");
+                            loop = true; 
+                        }                                       
                     };
                 }
             }
@@ -181,9 +195,9 @@ class User{
 
 abstract class Accounts
 {
-    double minBalance=0.0;
-    double balance=0.0;
-    double interest;
+    // double minBalance=0.0;
+    // double balance=0.0;
+    // double interest;
     String account_no;
 
     void deposit(double amount)
@@ -191,12 +205,13 @@ abstract class Accounts
         if(amount>0)
         {
             balance += amount;
+            System.out.println("Your deposit has been completed. \nYour current balance is "+getBalance());
         }
         else
         {
-            System.out.println("the entered amount to withdrawn must be positive");
-            this.printAccFunc();
+            System.out.println("The entered amount to withdraw must be positive");
         }
+        this.printAccFunc();
     }
 
     abstract void withdraw(double amount);
@@ -210,7 +225,8 @@ abstract class Accounts
         System.out.println("1. Deposit money in Account.");
         System.out.println("2. Withdraw money in Account.");
         System.out.println("3. Print Balance of Account.");
-        System.out.println("Choose another account");   
+        System.out.println("4. Choose another account");
+        System.out.println("5. Go Back to Main Menu");
     }
     protected void common_funcall(int inp){
         switch(inp)
@@ -222,6 +238,13 @@ abstract class Accounts
             case 2 -> {
                 System.out.println("enter the amount to be withdrawn");
                 this.withdraw(Main.sca.nextDouble());
+            }
+            case 3 -> {
+                System.out.println("your current balance is "+getBalance());
+                this.printAccFunc();
+            }
+            case 4 -> {
+                Main.users.get(Main.index).AccountFunctions();
             }
         }   
     }
@@ -239,6 +262,7 @@ class Savings extends Accounts
 
     void printAccFunc() {
         super.printAccFunc();
+
         System.out.println("Enter the appropriate choice");
         super.common_funcall(Main.sca.nextInt());
 
@@ -248,7 +272,6 @@ class Savings extends Accounts
         if((balance-amount)<0)
         {
             System.out.println("AAP UTNE AMIR NAHI HO");
-            this.printAccFunc();
         }
         else if((balance-amount)<minBalance)
         {
@@ -257,14 +280,13 @@ class Savings extends Accounts
             int choice=Main.sca.nextInt();
             if(choice==0)
             {
-                balance-=amount;
+                balance-=(amount+500);
             }
-            else if(choice==1)
-            {
-                this.printAccFunc();
-            }
+        }else {
+            balance -= amount;
         }
-
+        this.printAccFunc();
+        
     }
     
 
@@ -304,6 +326,7 @@ class Credit_Card extends Accounts
 public class Main
 {   
     static ArrayList<User> users=new ArrayList<>();         //ArrayList for all users.
+    static int index;
     static Scanner sca = new Scanner(System.in);
     static void signup()
     {
@@ -332,6 +355,7 @@ public class Main
                 users.add(new User());
                 users.get(users.size()-1).makeUser(username);
                 users.get(users.size()-1).makeChoice(printFunctions());
+                index = users.size() - 1;
                 break;
             }
         }
@@ -361,6 +385,7 @@ public class Main
                 if(signpass == users.get(i).getPass()) {
                     System.out.println("Login Succesfull");
                     users.get(i).makeChoice(printFunctions());
+                    index = i;
                     break;
                 }else {
                     System.out.println("Wrong Password");
@@ -376,14 +401,29 @@ public class Main
         }
         return;
     }
-    public static void main(String[] args) {
 
-        System.out.println("Welcome. Press 0 to Sign Up or 1 to Sign In!");
+    static void inupChoice() {
+        System.out.print("Press 0 to Sign Up or 1 to Sign In!");
         int signchoice=sca.nextInt();
         sca.nextLine();
         if(signchoice == 0) signup();
         else if(signchoice == 1) signin();
-        // printFunctions();
+    }
+
+    public static void main(String[] args) {
+
+        System.out.print("Welcome. ");
+        
+        inupChoice();
+
+        while(true) {
+            int choice = printFunctions();
+            if(choice == 5) {
+                System.out.println("Exiting the Program....");
+                break;
+            }
+            users.get(index).makeChoice(choice);
+        }
         
     }
 
