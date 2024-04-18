@@ -1,5 +1,6 @@
-import java.time.LocalDateTime;
 import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 class User{
     ArrayList <Accounts> account_list=new ArrayList<>();
@@ -43,7 +44,7 @@ class User{
             tempAccNo=sca.next();
             for(int i=0;i<account_list.size();i++)
             {
-                if(account_list.get(i).account_no==tempAccNo)
+                if(account_list.get(i).account_no.equals(tempAccNo))
                 {
                     System.out.println("Account number already refers to another account");
                     AccNoExists=true;
@@ -52,10 +53,45 @@ class User{
             }
         }
         a.account_no=tempAccNo;
-        System.out.println("Enter Current Balance");
-        a.balance=sca.nextDouble();
-        System.out.println("You have successfully created an account. You have been redirected to the main menu!");
-        this.makeChoice(Main.printFunctions());
+        if(a instanceof FD ){ 
+            outer: while(true)
+            {
+                System.out.println("Enter Current Balance");
+                double tempBalance=sca.nextDouble();
+                if(tempBalance<10000){
+                    inner: while(true){
+                        System.out.println("You can not create a FD with initial deposit less than 10000. \nIf you want to create an FD having greater balance, enter 0\nElse if you want to go back press 1");
+                        switch (sca.nextInt()) {
+                            case 0 -> {
+                                continue outer;
+                            }
+                            case 1 -> {
+                                this.makeAccount();
+                                return;
+                            }
+                            default ->{
+                                System.out.println("enter appropriate choice");
+                                continue inner;
+                            }
+                        }
+                    }
+                }   
+                else{
+                    a.balance=tempBalance;
+                    System.out.println("You have successfully created an account. You have been redirected to the main menu!");
+                    this.makeChoice(Main.printFunctions());
+                    break;
+                }
+            }
+        }
+        else{
+            System.out.println("Enter Current Balance");
+            double tempBalance=sca.nextDouble();
+            a.balance=tempBalance;
+            System.out.println("You have successfully created an account. You have been redirected to the main menu!");
+            this.makeChoice(Main.printFunctions());
+        }
+        
     }
 
     void AccountFunctions()
@@ -194,10 +230,19 @@ class User{
 
 abstract class Accounts
 {
-    double minBalance=0.0;
-    double balance=0.0;
-    double interest;
+    double minBalance;
+    double balance;
+    double interest_rate;
     String account_no;
+    ArrayList<Transaction> transactions = new ArrayList<>();
+
+    Accounts()
+    {
+        this.interest_rate=0.0;
+        this.account_no="";
+        this.balance=0.0;
+        this.minBalance=0.0;
+    }
 
     void deposit(double amount)
     {
@@ -205,6 +250,8 @@ abstract class Accounts
         {
             balance += amount;
             System.out.println("Your deposit has been completed. \nYour current balance is "+getBalance());
+            Transaction temp = new Transaction(amount, balance, account_no, false);
+            this.transactions.add(temp);
         }
         else
         {
@@ -213,7 +260,12 @@ abstract class Accounts
         this.printAccFunc();
     }
 
-    abstract void withdraw(double amount);
+    void withdraw(double amount){
+        if((balance-amount)<0)
+        {
+            System.out.println("AAP UTNE AMIR NAHI HO");
+        }
+    }
    
     double getBalance()
     {
@@ -225,7 +277,7 @@ abstract class Accounts
         System.out.println("2. Withdraw money in Account.");
         System.out.println("3. Print Balance of Account.");
         System.out.println("4. Choose another account");
-        System.out.println("5. Go Back to Main Menu");
+        // System.out.println("5. Go Back to Main Menu");
     }
     protected void common_funcall(int inp){
         switch(inp)
@@ -240,12 +292,27 @@ abstract class Accounts
             }
             case 3 -> {
                 System.out.println("Your current Balance is "+getBalance());
+                try{
+                    Thread.sleep(3000);
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 this.printAccFunc();
             }
             case 4 -> {
                 Main.users.get(Main.index).AccountFunctions();
             }
         }   
+    }
+
+    void printTransactions() {
+        Transaction.printTop();
+
+        for(int i = 0; i < transactions.size(); i++) {
+            this.transactions.get(i).printTrans();
+        }
+
     }
     // abstract void transfer(double amount, String destination_acc_no);
     // abstract void getTransactionHistory();
@@ -257,8 +324,52 @@ class Savings extends Accounts
 {
 
     double minBalance=2000.0;
-    double interest = 3.5;
+    Savings()
+    {
+        super();
+        interest_rate = 3.5;
+    }
 
+    void printAccFunc() {
+        super.printAccFunc();
+
+        System.out.println("Enter the appropriate choice");
+        super.common_funcall(Main.sca.nextInt());
+
+    }
+    void withdraw(double amount)
+    {
+        super.withdraw(amount);
+        if((balance-amount)<minBalance)
+        {
+            System.out.println("Warning! The amount withstanding falls below minimum balance required (Rs.2000), \n If you wish to continue with the withdrawal, you will be charged Rs.500. \n The maximum amount you can withdraw is "+ (balance-minBalance));
+            System.out.println("Enter 0 to continue with this withdrawal and 1 to discontinue the withdrawal");
+            int choice=Main.sca.nextInt();
+            if(choice==0)
+            {
+                balance-=(amount+500);
+                Transaction temp = new Transaction(amount, balance, account_no, true);
+                super.transactions.add(temp);
+            }
+        }else {
+            balance -= amount;
+            Transaction temp = new Transaction(amount, balance, account_no, true);
+            super.transactions.add(temp);
+        }
+        this.printAccFunc();
+        
+    }      
+    
+
+}      
+
+class Checking extends Accounts      
+{      
+    Checking()      
+    {      
+        super();      
+        interest_rate = 1;      
+    }
     void printAccFunc() {
         super.printAccFunc();
 
@@ -272,44 +383,31 @@ class Savings extends Accounts
         {
             System.out.println("AAP UTNE AMIR NAHI HO");
         }
-        else if((balance-amount)<minBalance)
-        {
-            System.out.println("Warning! The amount withstanding falls below minimum balance required (Rs.2000), \n If you wish to continue with the withdrawal, you will be charged Rs.500. \n The maximum amount you can withdraw is "+ (balance-minBalance));
-            System.out.println("Enter 0 to continue with this withdrawal and 1 to discontinue the withdrawal");
-            int choice=Main.sca.nextInt();
-            if(choice==0)
-            {
-                balance-=(amount+500);
-            }
-        }else {
+        else {
             balance -= amount;
+            Transaction temp = new Transaction(amount, balance, account_no, true);
+            super.transactions.add(temp);
         }
         this.printAccFunc();
         
     }
-    
-
-}
-
-class Checking extends Accounts
-{
-
-    void printAccFunc() {
-        
-    }
-
-    void withdraw(double amount) {}
-
 }
 
 class FD extends Accounts
 {
+    
+    
+    public FD()
+    {
+        super();
 
-
+    }
     void printAccFunc() {
         
     }
-    void withdraw(double amount) {}
+    void withdraw(double amount) {
+        super.withdraw(amount);
+    }
 }
 
 class Credit_Card extends Accounts
@@ -324,12 +422,12 @@ class Credit_Card extends Accounts
 
 class Transaction {
     String time;
-    String amount;
-    String balance;
+    double amount;
+    double balance;
     String accountno;
     boolean withtrue;
 
-    Transaction(String amount, String balance, String accountno, boolean withtrue) {
+    Transaction(double amount, double balance, String accountno, boolean withtrue) {
         
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
         LocalDateTime now = LocalDateTime.now();  
@@ -339,6 +437,20 @@ class Transaction {
         this.balance = balance;
         this.accountno = accountno;
         this.withtrue = withtrue;
+    }
+
+    static void printTop() {
+        // System.out.println("\t Time \t     Account No. \t Amount \t With/Dep \t Balance");
+        System.out.printf("%12s \t  %17s  %6s \t %5s \t%9s", "Time", "Account No.", "Amount", "With/Dep", "Balance");
+        System.out.println();
+    }
+
+    void printTrans() {
+        // if(withtrue)System.out.println(time + "\t   " + accountno + "\t" + amount + "\t\t Withdraw \t" + balance);
+        // else System.out.println(time + "\t   " + accountno + "\t  " + amount + "\t\t Deposit \t" + balance);
+        if(withtrue) System.out.format("%20s \t %7s %10s \t %7s \t%9s", time, accountno, Double.toString(amount), "Withdraw", Double.toString(balance));
+        else System.out.format("%20s \t %7s %10s \t %7s \t%9s", time, accountno, Double.toString(amount), "Deposit", Double.toString(balance));
+        System.out.println();
     }
 
 }
@@ -423,7 +535,7 @@ public class Main
     }
 
     static void inupChoice() {
-        System.out.print("Press 0 to Sign Up or 1 to Sign In!");
+        System.out.println("Press 0 to Sign Up or 1 to Sign In!");
         int signchoice=sca.nextInt();
         sca.nextLine();
         if(signchoice == 0) signup();
@@ -438,7 +550,7 @@ public class Main
 
         while(true) {
             int choice = printFunctions();
-            if(choice == 5) {
+            if(choice == 4) {
                 System.out.println("Exiting the Program....");
                 break;
             }
@@ -452,11 +564,13 @@ public class Main
         System.out.println("Welcome");
         System.out.println("The following functionalities are available for your use:");
         System.out.println("1. Manage Accounts");
-        System.out.println("2. Budgeting");
-        System.out.println("3. Debt Management");
-        System.out.println("4. Log Out");
-        System.out.println("5. Exit");
+        System.out.println("2. Track Transactions");
+        // System.out.println("2. Budgeting");
+        // System.out.println("3. Debt Management");
+        System.out.println("3. Log Out");
+        System.out.println("4. Exit");
         System.out.println("Enter the appropriate Digit to proceed further");
+        
         int ch = sca.nextInt();
         return ch;
     }
