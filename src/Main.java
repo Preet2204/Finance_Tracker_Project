@@ -8,6 +8,26 @@ class User{
     private String pass=new String();
     private String userName = new String();
 
+    void setUserName(String username) {
+        this.userName=username;
+    }
+
+    String getUserName()
+    {
+        return userName;
+    }
+
+    void setPass(String password)
+    {
+        this.pass=password;
+    }
+
+    String getPass()
+    {
+        return pass;
+    }
+
+
     void makeAccount()
     {
         System.out.println("What kind of account do you want to create?");
@@ -179,30 +199,58 @@ class User{
                 }
             }
             case 2 ->{
-                        
+                boolean loop = true;
+                while(loop) {
+                    System.out.println("What would you like to do.");
+                    System.out.println("1. Print Transaction of All Accounts");
+                    System.out.println("2. Print Transaction of a Specific Account");
+                    System.out.println("3. Go Back to Main Menu");
+                    System.out.println("Enter Appropriate digit");
+                    loop = false;
+                    switch (sca.nextInt()) {
+                        case 1 -> {
+                            System.out.println("----------------------------------------------------------------------------------------------------");
+                            for(int i = 0; i < account_list.size(); i++) {
+                                System.out.println("Account No: " + account_list.get(i).account_no);
+                                System.out.println("Account Type: " + account_list.get(i).getClass().getName());
+                                System.out.println("----------------------------------------------------------------------------------------------------");
+                                account_list.get(i).printTransactions();
+                                System.out.println("----------------------------------------------------------------------------------------------------");
+                                System.out.println("----------------------------------------------------------------------------------------------------");
+                            }
+                        }
+                        case 2 -> {
+                            boolean accNoExists = true;
+                            while(accNoExists)
+                            {
+                                accNoExists = false;
+                                System.out.println("Enter Account No. of the Account you want to print Transaction of.");
+                                String tempAcc_no = sca.next();
+                                for(int i = 0; i < account_list.size(); i++) {
+                                    if(account_list.get(i).account_no.equals(tempAcc_no)) {
+                                        account_list.get(i).printTransactions();
+                                    }
+                                }
+
+                                if(i == account_list.size()) {
+                                    System.out.println("Invalid Account No.");
+                                    System.out.println("Account No. Doesn't Exist.");
+                                    accNoExists = true;
+                                }
+                            }
+                        }
+                        case 3 -> {return;}
+                        default -> {
+                            System.out.println("Invalid Input. Please try Again.")
+                            loop = true;
+                        }
+                    }
+                }
             }
         };
     }
 
-    void setUserName(String username) {
-        this.userName=username;
-    }
-
-    String getUserName()
-    {
-        return userName;
-    }
-
-    void setPass(String password)
-    {
-        this.pass=password;
-    }
-
-    String getPass()
-    {
-        return pass;
-    }
-
+    
 
 
     void makeUser(String username)
