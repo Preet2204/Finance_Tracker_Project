@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 class User{
-    ArrayList <Accounts> account_list=new ArrayList<>();
+    ArrayList <Accounts> account_list=new ArrayList<>();    //will contain all the accounts a user will have
     Scanner sca = new Scanner(System.in);
     private String pass=new String();
     private String userName = new String();
@@ -17,10 +17,11 @@ class User{
         System.out.println("4. Credit Card ");
         System.out.println("5. Go Back to Main Menu");
         Accounts a=new Savings();
-        boolean UserNotCoop=true;
-        while(UserNotCoop)
+        boolean UserNotCoop=true;           //variable used to check if the user has entered the correct serial number
+                                            //we initialise the variable to true as default to enter the while loop
+        while(UserNotCoop)                  //while loop to repeat the entering input process till the user enter a digit in the menu
         {
-            UserNotCoop=false;
+            UserNotCoop=false;              //we assume that the user will cooperate 
             switch(sca.nextInt())
             {
                 case 1 -> a = new Savings();
@@ -29,64 +30,65 @@ class User{
                 case 4 -> a = new Credit_Card();
                 case 5 -> {return;}
                 default -> {
-                    UserNotCoop=true;
+                    UserNotCoop=true;        //only when he doesnt we update the variable to true
                     System.out.println("Enter given choices only");
                 }
             };
         }
-        account_list.add(a);
-        // boolean AccNoExists=true;
         String tempAccNo="";
-        UserNotCoop = true;
-        while(/* AccNoExists */ UserNotCoop)
+        UserNotCoop = true;                 //now the variable is used to check if the entered account number is valid
+        while(UserNotCoop)                  //while loop will iterate till the entered account number is valid
         {
-            // AccNoExists = false;
-            UserNotCoop = false;
+            UserNotCoop = false;            //we assume that the user will enter a valid account number  
             System.out.println("Enter Unique Account Number (Only 7 Digits)");
             tempAccNo=sca.next();
 
             if(tempAccNo.length() == 7) {
 
-                for(int i = 0; i < 7; i++) {
+                for(int i = 0; i < 7; i++) {        //checking if all entered characters are numbers 
                     if(tempAccNo.charAt(i) > '9' || tempAccNo.charAt(i) < '0') {
                         System.out.println("Account Number should only have Numbers");
-                        UserNotCoop = true;
-                        break;
+                        UserNotCoop = true;         //now it holds that the user has not entered valid acc no (i.e the while loop will re-iterate)
+                        break;                      //exits the for loop as soon it encounters one non digit 
                     }
 
                 }
 
-                for(int i=0;i<account_list.size() && !UserNotCoop;i++)
+                for(int i=0;i<account_list.size() && !UserNotCoop;i++)  // && !UserNotCoop is present to avoid execution of this loop if the user hasnt entered a valid account number 
+                                                                        //only when user cooperates will this loop execute 
                 {
-                    if(account_list.get(i).account_no.equals(tempAccNo))
+                    if(account_list.get(i).account_no.equals(tempAccNo)) //this checks if there already exists a account with same reference number
                     {
                         System.out.println("Account number already refers to another account");
-                        // AccNoExists=true;
-                        UserNotCoop = true;
+                        UserNotCoop = true;                              //user doesnt enter valid acc no, loop iterates
                         break;
                     }
                 }
             }else {
                 System.out.println("Invalid Account No.");
                 System.out.println("Account No. should only have 7 Digits");
+                UserNotCoop = true;                                     //user doesnt enter valid acc no, loop iterates
             }
         }
         
         a.account_no=tempAccNo;
-        if(a instanceof FD ){ 
-            outer: while(true)
+        if(a instanceof FD ){           //checks if the object a is of type FD (since FD has a initial deposit criteria)
+            outer: while(true)          //outer while iterates till balance entered isnt greater than 10,000
             {
                 System.out.println("Enter Current Balance");
                 double tempBalance=sca.nextDouble();
                 if(tempBalance<10000){
-                    inner: while(true){
-                        System.out.println("You can not create a FD with initial deposit less than 10000. \nIf you want to create an FD having greater balance, enter 0\nElse if you want to go back press 1");
+
+                    System.out.println("You can not create a FD with initial deposit less than 10000."); 
+
+                    inner: while(true){             //inner while is for takig the proper input from the given choices 
+                        System.out.println("If you want to create an FD having greater balance, enter 0\nElse if you want to go back press 1");
                         switch (sca.nextInt()) {
                             case 0 -> {
-                                continue outer;
+                                continue outer;     //takes the balance again for the FD account
                             }
                             case 1 -> {
-                                this.makeAccount();
+                                this.makeAccount(); //takes user back to making new Account 
                                 return;
                             }
                             default ->{
@@ -96,20 +98,21 @@ class User{
                         }
                     }
                 }   
-                else{
+                else{       //balance is sufficient to create an FD account
                     a.balance=tempBalance;
+                    account_list.add(a);
                     System.out.println("You have successfully created an account. You have been redirected to the main menu!");
-                    this.makeChoice(Main.printFunctions());
                     break;
                 }
             }
         }
-        else{
+        else{                                               //if the account is of any type other than FD (no minimum initial deposit is required)
             System.out.println("Enter Current Balance");
             double tempBalance=sca.nextDouble();
             a.balance=tempBalance;
+            account_list.add(a);
             System.out.println("You have successfully created an account. You have been redirected to the main menu!");
-            this.makeChoice(Main.printFunctions());
+            
         }
         
     }
@@ -120,51 +123,54 @@ class User{
         {
             System.out.println("Enter the account number of the account you wish to choose (enter -1 to go back)");
             String tempString=sca.next();
-            int i=0;
+            int i=0;                    //to store the index of the account the user wants to perform functions on
             if(tempString.equals("-1"))
             {
                 makeChoice(1);
-                break;
+                break;                  //break is required to exit the while loop, once the user makes another choice and that execution is completed, code returns back to this line
             }
-            for(;i<=account_list.size()-1;i++)
+            for(;i<=account_list.size()-1;i++)  //searching the account number entered 
             {
-                if(tempString.equals(account_list.get(i).account_no)) break;
+                if(tempString.equals(account_list.get(i).account_no)) break;    
             }
-            if(i<account_list.size())
+            if(i<account_list.size())   //after the loop iterates completely, if the acc no was found, index of that account in the arraylist must be smaller than the list size
             {
                 account_list.get(i).printAccFunc();
-                break;
+                break;  
             }
             else{
-                System.out.println("Account Number already Exists.");
+                System.out.println("Account Number Doesnt Exist.");  
                 continue;
             }
         }
 
     }
 
+    //For user to make a choice given in the MAIN MENU only 
     void makeChoice(int ch)
     {
         switch(ch)
         {
-            case 1 ->{ 
+            case 1 ->{                  //to MANAGE ACCOUNTS 
                 boolean loop = true;
-                while(loop)
+                inner: while(loop)     // To reiterate the choices if user enters wrong number
                 {
-                    System.out.println("What would you like to do");
+                    System.out.println("What would you like to do");                        
                     System.out.println("1. Add an account");
                     System.out.println("2. Perform actions on already existing account");
                     System.out.println("3. Go Back to Main Menu");
-                    loop = false;
+                    loop = false;           //we assume that the user will choose the correct serial number 
                     switch(sca.nextInt())
                     {
                         case 1 -> {
                             makeAccount();
+                            break inner;
                         }
                         case 2 -> {
                             AccountFunctions();
+                            break inner;
                         }
-                        case 3 -> {return;}
+                        case 3 -> {return;}     //directly returning back will always go back to main method because wherever makeChoice is called, the method always goes back to main method 
                         default -> {
                             System.out.println("Invalid Number. Enter Again.");
                             loop = true; 
@@ -281,10 +287,17 @@ abstract class Accounts
     }
 
     void withdraw(double amount){
+        
         if((balance-amount)<0)
         {
             System.out.println("AAP UTNE AMIR NAHI HO");
         }
+        else {
+            balance -= amount;
+            Transaction temp = new Transaction(amount, balance, account_no, true);
+            transactions.add(temp);
+        }
+        this.printAccFunc();
     }
    
     double getBalance()
@@ -343,11 +356,10 @@ abstract class Accounts
 class Savings extends Accounts
 {
 
-    double minBalance=2000.0;
     Savings()
     {
-        super();
         interest_rate = 3.5;
+        minBalance=2000.0;
     }
 
     void printAccFunc() {
@@ -359,8 +371,11 @@ class Savings extends Accounts
     }
     void withdraw(double amount)
     {
-        super.withdraw(amount);
-        if((balance-amount)<minBalance)
+        if((balance-amount)<0)
+        {
+            System.out.println("AAP UTNE AMIR NAHI HO");
+        }
+        else if((balance-amount)<minBalance)
         {
             System.out.println("Warning! The amount withstanding falls below minimum balance required (Rs.2000), \n If you wish to continue with the withdrawal, you will be charged Rs.500. \n The maximum amount you can withdraw is "+ (balance-minBalance));
             System.out.println("Enter 0 to continue with this withdrawal and 1 to discontinue the withdrawal");
@@ -396,20 +411,6 @@ class Checking extends Accounts
         System.out.println("Enter the appropriate choice");
         super.common_funcall(Main.sca.nextInt());
 
-    }
-    void withdraw(double amount)
-    {
-        if((balance-amount)<0)
-        {
-            System.out.println("AAP UTNE AMIR NAHI HO");
-        }
-        else {
-            balance -= amount;
-            Transaction temp = new Transaction(amount, balance, account_no, true);
-            super.transactions.add(temp);
-        }
-        this.printAccFunc();
-        
     }
 }
 
@@ -482,7 +483,7 @@ public class Main
     static Scanner sca = new Scanner(System.in);
     static void signup()
     {
-        while(true){
+        while(true){ 
             boolean userExists=false;
 
             System.out.println("Enter User Name: ");
