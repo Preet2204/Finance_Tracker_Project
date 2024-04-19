@@ -23,10 +23,10 @@ class User{
             UserNotCoop=false;
             switch(sca.nextInt())
             {
-                case 1 -> a= new Savings();
-                case 2 -> a= new Checking();
-                case 3 -> a= new FD();
-                case 4 -> a= new Credit_Card();
+                case 1 -> a = new Savings();
+                case 2 -> a = new Checking();
+                case 3 -> a = new FD();
+                case 4 -> a = new Credit_Card();
                 case 5 -> {return;}
                 default -> {
                     UserNotCoop=true;
@@ -35,23 +35,43 @@ class User{
             };
         }
         account_list.add(a);
-        boolean AccNoExists=true;
+        // boolean AccNoExists=true;
         String tempAccNo="";
-        while(AccNoExists)
+        UserNotCoop = true;
+        while(/* AccNoExists */ UserNotCoop)
         {
-            AccNoExists=false;
-            System.out.println("Enter Unique Account Number");
+            // AccNoExists = false;
+            UserNotCoop = false;
+            System.out.println("Enter Unique Account Number (Only 7 Digits)");
             tempAccNo=sca.next();
-            for(int i=0;i<account_list.size();i++)
-            {
-                if(account_list.get(i).account_no.equals(tempAccNo))
-                {
-                    System.out.println("Account number already refers to another account");
-                    AccNoExists=true;
-                    break;
+
+            if(tempAccNo.length() == 7) {
+
+                for(int i = 0; i < 7; i++) {
+                    if(tempAccNo.charAt(i) > '9' || tempAccNo.charAt(i) < '0') {
+                        System.out.println("Account Number should only have Numbers");
+                        UserNotCoop = true;
+                        break;
+                    }
+
                 }
+
+                for(int i=0;i<account_list.size() && !UserNotCoop;i++)
+                {
+                    if(account_list.get(i).account_no.equals(tempAccNo))
+                    {
+                        System.out.println("Account number already refers to another account");
+                        // AccNoExists=true;
+                        UserNotCoop = true;
+                        break;
+                    }
+                }
+            }else {
+                System.out.println("Invalid Account No.");
+                System.out.println("Account No. should only have 7 Digits");
             }
         }
+        
         a.account_no=tempAccNo;
         if(a instanceof FD ){ 
             outer: while(true)
@@ -116,7 +136,7 @@ class User{
                 break;
             }
             else{
-                System.out.println("Invaid Account Number.");
+                System.out.println("Account Number already Exists.");
                 continue;
             }
         }
@@ -527,7 +547,7 @@ public class Main
             }
             else
             {
-                System.out.println("entered username doesnt exist. Please try again");
+                System.out.println("Entered Username doesnt exist. Please try again");
                 continue;
             }
         }
