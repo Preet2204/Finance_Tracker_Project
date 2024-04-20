@@ -324,6 +324,7 @@ class User{
 
  class Accounts
 {
+    //declaring the neccessary variables required
     int tenure;
     double minBalance;
     double balance;
@@ -347,14 +348,14 @@ class User{
             calculateInterest();
             balance += amount;
             System.out.println("Your deposit has been completed. \nYour current balance is "+getBalance());
-            Transaction temp = new Transaction(amount, balance, account_no, false);
+            Transaction temp = new Transaction(amount, balance, account_no, false);                 //adding the transaction to the transaction list 
             this.transactions.add(temp);
         }
         else
         {
             System.out.println("The entered amount to withdraw must be positive");
         }
-        this.printAccFunc();
+        this.printAccFunc();                                                            //returning back to the functions that can be performed on the given account
     }
 
     void withdraw(double amount){
@@ -367,7 +368,7 @@ class User{
             calculateInterest();
             balance -= amount;
             System.out.println("Your withdrawal is successfully completed");
-            Transaction temp = new Transaction(amount, balance, account_no, true);
+            Transaction temp = new Transaction(amount, balance, account_no, true);      //adding transaction to the transaction list 
             transactions.add(temp);
         }
         this.printAccFunc();
@@ -437,6 +438,7 @@ class User{
             balance += interest_rate*(balance)/100;
             diff = balance - now_balan;
             Transaction temp = new Transaction(diff, balance, account_no, false);
+            transactions.add(temp);
         }
 
         last_date = now_date;
@@ -517,7 +519,7 @@ class Checking extends Accounts
             String choice = Main.sca.next();
             Main.sca.nextLine();
             if(choice.charAt(0) > '0' && choice.charAt(0) <= '5'){
-                super.common_funcall(choice.charAt(0));               //takes input from the static scanner object in Main class
+                super.common_funcall(choice.charAt(0));               
                 break;
             } else {
                 System.out.println("Enter Appropriate input.");
@@ -572,9 +574,19 @@ class FD extends Accounts
                         if(Main.sca.nextInt()==0)
                         {
                             this.withdraw(this.balance);
+                            for(int i=0;i<Main.users.get(Main.index).account_list.size();i++)                   //searching for the index of the account in the list of accounts of the present user 
+                            {
+                                if(Main.users.get(Main.index).account_list.account_no.equals(this.account_no)) 
+                                {
+                                    Main.users.get(Main.index).account_list.remove(i);                         //removes the account from the list     
+                                    break;
+                                }
+                                
+                            }
+                           
                         }
                         else{
-                            common_funcall('2');
+                            common_funcall('2');                //redirecting the user to the previous page 
                         }
                     }
                     case '1' ->
@@ -607,8 +619,6 @@ class FD extends Accounts
         }   
     }
 }
-
-
 
 class Transaction {
     String time;
@@ -647,19 +657,6 @@ public class Main
     static int index;
     static Scanner sca = new Scanner(System.in);
 
-    // static String now_date() {
-    //     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("ddMMyyyy");
-    //     LocalDate currenDate = LocalDate.now();
-    //     String dateString = currenDate.format(dtf);
-    //     return dateString;
-    // }
-
-    // static day_diff(String day1, String day2) {
-    //     String temp1 = "" + day1.charAt(0) + day1.charAt(1);
-    //     String temp2 = "" + day2.charAt(0) + day2.charAt(1);
-    //     int day1num = Integer;
-    // }
-
     static void signup()
     {
         while(true){                                        //while loop iterates till the user enters a previously non existing username                                      
@@ -670,8 +667,7 @@ public class Main
             String username=sca.nextLine();
             for(int i = 0;i<users.size();i++)               //searches in the arraylist if any user has a similar username
             {
-                if(users.get(i).getUserName()==username)
-                {
+                if(users.get(i).getUserName().equals(username)){
                     userExists=true;
                     break;                                  
                 }
@@ -701,11 +697,11 @@ public class Main
             sca.nextLine();
             
             boolean isUser = false;
-            int i;
+            int i;                                                  //to store the value of the user index for which the user wants to sign in 
             System.out.println(users.size());
-            for(i = 0; i < users.size(); i++) {
+            for(i = 0; i < users.size(); i++) {                     //searching for the user who has the input username
                 if(signuser.equals(users.get(i).getUserName())) {
-                    isUser = true;
+                    isUser = true;                                  
                     break;
                 }
             }
@@ -715,7 +711,7 @@ public class Main
                 System.out.println("Enter Password: ");
                 signpass = sca.nextLine();
 
-                if(signpass.equals(users.get(i).getPass())) {    
+                if(signpass.equals(users.get(i).getPass())) {              //checking if the password entered is correct 
                     System.out.println("Login Succesfull");
                     index = i;    
                     break;
@@ -735,7 +731,7 @@ public class Main
     }
 
     static void inupChoice() {
-        while(true)
+        while(true)                                                         //while loop to iterate indefinitely till the user enter the correct input
         {
             System.out.println("Press 0 to Sign Up or 1 to Sign In!");
             String signchoice = sca.next();
@@ -765,22 +761,12 @@ public class Main
         
         inupChoice();                                               //this method is called to take sign in or sign up from user 
 
-        // if(choice == '3') {
-        //     inupChoice();
-        // }
-        // if(choice == '4') {                                       
-        //     System.out.println("Exiting the Program....");      
-        //     break;
-        // }
-
-        // users.get(users.size()-1).makeChoice(printFunctions());
-
         while(true) {                                               //this while loop continues to print functions till the user chooses to exit the program
-            char choice = printFunctions();
-            if(choice == '3') {
+            char choice = printFunctions();                         //all functions in the whole code will finally return here
+            if(choice == '3') {                                     //if the user chooses to log out , they will be redirected to inup function
                 inupChoice();
             }
-            if(choice == '4') {                                       
+            if(choice == '4') {                                     //if user chooses to exit the program, we simply get out of the while loop :) 
                 System.out.println("Exiting the Program....");      
                 break;
             }
