@@ -14,23 +14,21 @@ class User{
         System.out.println("1. Savings ");
         System.out.println("2. Checking");
         System.out.println("3. Fixed Deposit");
-        System.out.println("4. Credit Card ");
-        System.out.println("5. Go Back to Main Menu");
+        System.out.println("4. Go Back to Main Menu");
         Accounts a=new Accounts();
         boolean UserNotCoop=true;           //variable used to check if the user has entered the correct serial number
                                             //we initialise the variable to true as default to enter the while loop
         while(UserNotCoop)                  //while loop to repeat the entering input process till the user enter a digit in the menu
         {
             UserNotCoop=false;              //we assume that the user will cooperate 
-            String choice = sca.next();
-            sca.nextLine();
+            String choice = Main.sca.next();
+            Main.sca.nextLine();
             switch(choice.charAt(0))
             {
                 case '1' -> a = new Savings();
                 case '2' -> a = new Checking();
                 case '3' -> a = new FD();
-                case '4' -> a = new Credit_Card();
-                case '5' -> {return;}
+                case '4' -> {return;}
                 default -> {
                     UserNotCoop=true;        //only when he doesnt we update the variable to true
                     System.out.println("Enter given choices only");
@@ -43,7 +41,7 @@ class User{
         {
             UserNotCoop = false;            //we assume that the user will enter a valid account number  
             System.out.println("Enter Unique Account Number (Only 7 Digits)");
-            tempAccNo=sca.next();
+            tempAccNo=Main.sca.next();
 
             if(tempAccNo.length() == 7) {
 
@@ -79,15 +77,15 @@ class User{
             outer: while(true)          //outer while iterates till balance entered isnt greater than 10,000
             {
                 System.out.println("Enter Current Balance");
-                double tempBalance=sca.nextDouble();
+                double tempBalance=Main.sca.nextDouble();
                 if(tempBalance<10000){
 
                     System.out.println("You can not create a FD with initial deposit less than 10000."); 
 
                     inner: while(true){             //inner while is for takig the proper input from the given choices 
                         System.out.println("If you want to create an FD having greater balance, enter 0\nElse if you want to go back press 1");
-                        String choiceString = sca.next();
-                        sca.nextLine();
+                        String choiceString = Main.sca.next();
+                        Main.sca.nextLine();
                         switch (choiceString.charAt(0)) {
                             case '0' -> {
                                 continue outer;     //takes the balance again for the FD account
@@ -105,9 +103,10 @@ class User{
                 }   
                 else{       //balance is sufficient to create an FD account
                     a.balance=tempBalance;
-                    System.out.println("enter the maturity period in years you wawnt to choose for your FD account");
-                    a.tenure=sca.nextInt();
+                    System.out.println("enter the maturity period in years you want to choose for your FD account");
+                    a.tenure=Main.sca.nextInt();
                     a.interest_rate=(3.5 + a.balance/10000000 + a.tenure/4);
+                    System.out.println("The interest category applicable for your tenure and deposit is "+a.interest_rate+"%");
                     account_list.add(a);
                     System.out.println("You have successfully created an account. You have been redirected to the main menu!");
                     break;
@@ -116,7 +115,7 @@ class User{
         }
         else{                                               //if the account is of any type other than FD (no minimum initial deposit is required)
             System.out.println("Enter Current Balance");
-            double tempBalance=sca.nextDouble();
+            double tempBalance=Main.sca.nextDouble();
             a.balance=tempBalance;
             account_list.add(a);
             System.out.println("You have successfully created an account. You have been redirected to the main menu!");
@@ -130,7 +129,7 @@ class User{
         while(true)
         {
             System.out.println("Enter the account number of the account you wish to choose (enter -1 to go back)");
-            String tempString=sca.next();
+            String tempString=Main.sca.next();
             int i=0;                    //to store the index of the account the user wants to perform functions on
             if(tempString.equals("-1"))
             {
@@ -168,8 +167,8 @@ class User{
                     System.out.println("2. Perform actions on already existing account");
                     System.out.println("3. Go Back to Main Menu");
                     loop = false;           //we assume that the user will choose the correct serial number 
-                    String choice = sca.next();
-                    sca.nextLine();
+                    String choice = Main.sca.next();
+                    Main.sca.nextLine();
                     switch(choice.charAt(0))
                     {
                         case '1' -> {
@@ -197,8 +196,8 @@ class User{
                     System.out.println("3. Go Back to Main Menu");
                     System.out.println("Enter Appropriate digit");
                     loop = false;                                                       //we assume the user enter correct serial number
-                    String choice = sca.next();
-                    sca.nextLine(); 
+                    String choice = Main.sca.next();
+                    Main.sca.nextLine(); 
                     switch (choice.charAt(0)) {
                         case '1' -> {
                             System.out.println("----------------------------------------------------------------------------------------------------");
@@ -217,7 +216,7 @@ class User{
                             {
                                 accNoExists = false;
                                 System.out.println("Enter Account No. of the Account you want to print Transaction of.");
-                                String tempAcc_no = sca.next();
+                                String tempAcc_no = Main.sca.next();
                                 int i = 0;
                                 for(; i < account_list.size(); i++) {
                                     if(account_list.get(i).account_no.equals(tempAcc_no)) {
@@ -271,7 +270,7 @@ class User{
         {
             setUserName(username);
             System.out.println("Create Password: ");
-            String password = sca.nextLine();
+            String password = Main.sca.nextLine();
             boolean hasUpper=false;
             boolean hasLower=false;
             boolean hasDigit=false;
@@ -355,6 +354,7 @@ class User{
         }
         else {
             balance -= amount;
+            System.out.println("Your withdrawal is successfully completed");
             Transaction temp = new Transaction(amount, balance, account_no, true);
             transactions.add(temp);
         }
@@ -376,15 +376,15 @@ class User{
     protected void common_funcall(char inp){             //has switch to execute appropriate function as per the methods in printAccFunc 
         switch(inp)
         {
-            case 1 -> {
+            case '1' -> {
                 System.out.println("Enter the amount to be Deposited");
                 this.deposit(Main.sca.nextDouble());    //calls the deposit function of the account object created 
             }
-            case 2 -> {
+            case '2' -> {
                 System.out.println("Enter the amount to be Withdrawn");
                 this.withdraw(Main.sca.nextDouble());   //calls the withdraw function of the account object created 
             }
-            case 3 -> {
+            case '3' -> {
                 System.out.println("Your current Balance is "+getBalance()); 
                 try{                                    //adds a delay of 3 seconds after printing the balance of the account 
                     Thread.sleep(3000);
@@ -394,10 +394,10 @@ class User{
 
                 this.printAccFunc();                    //will return back to functionalities of the chosen ACCOUNT  
             }
-            case 4 -> {
+            case '4' -> {
                 Main.users.get(Main.index).AccountFunctions();  //goes to the functions of the chosen USER
             }
-            case 5 -> {
+            case '5' -> {
                 return;                                 //this will terminate all the recursive function calls and return the code to main 
             }
         }   
@@ -431,9 +431,9 @@ class Savings extends Accounts
 
         while(true) {
             System.out.println("Enter the appropriate choice");
-            String choice = sca.next();
-            sca.nextLine();
-            if(choice.charAt(0) >= '0' && choice.charAt(0) <= '5'){
+            String choice = Main.sca.next();
+            Main.sca.nextLine();
+            if(choice.charAt(0) > '0' && choice.charAt(0) <= '5'){
                 super.common_funcall(choice.charAt(0));               //takes input from the static scanner object in Main class
                 break;
             } else {
@@ -482,8 +482,8 @@ class Checking extends Accounts
 
         while(true) {
             System.out.println("Enter the appropriate choice");
-            String choice = sca.next();
-            sca.nextLine();
+            String choice = Main.sca.next();
+            Main.sca.nextLine();
             if(choice.charAt(0) >= '0' && choice.charAt(0) <= '5'){
                 super.common_funcall(choice.charAt(0));               //takes input from the static scanner object in Main class
                 break;
@@ -508,10 +508,10 @@ class FD extends Accounts
         
         while(true) {
             System.out.println("Enter the appropriate choice");
-            String choice = sca.next();
-            sca.nextLine();
+            String choice = Main.sca.next();
+            Main.sca.nextLine();
             if(choice.charAt(0) >= '0' && choice.charAt(0) <= '5'){
-                super.common_funcall(choice.charAt(0));               //takes input from the static scanner object in Main class
+                common_funcall(choice.charAt(0));               //calling the overriden function common_funcall
                 break;
             } else {
                 System.out.println("Enter Appropriate input.");
@@ -523,20 +523,27 @@ class FD extends Accounts
     public void common_funcall(char inp){             //has switch to execute appropriate function as per the methods in printAccFunc 
         switch(inp)
         {
-            case '1' -> {
+            case '1' -> {   //deposition in fd is not allowed
                 System.out.println("This is a Fixed Deposit account, You can not deposit any amount other than the initial deposit mentioned in the contract");
                 this.printAccFunc();
             }
             case '2' -> {
-                System.out.println("Enter 1 to Withdraw partial amount (subject to penalty [5% of the withdrawn amount])");
                 System.out.println("Enter 0 to break the Fixed deposit and withdraw full amount (subject to reduction in interest rates for the contract)");
+                System.out.println("Enter 1 to Withdraw partial amount (subject to penalty [5% of the withdrawn amount])");
                 System.out.println("enter anything else to go back");
 
-                String choice = sca.next();
-                sca.nextLine();
+                String choice = Main.sca.next();
+                Main.sca.nextLine();
                 switch (choice.charAt(0)) {
                     case '0' -> {
-                        this.withdraw(this.balance);
+                        System.out.println("We are deleting this account,\nplease enter 0 to confirm and 1 to think again");
+                        if(sca.nextInt()==0)
+                        {
+                            this.withdraw(this.balance);
+                        }
+                        else{
+                            common_funcall(2);
+                        }
                     }
                     case '1' ->
                     {
@@ -569,15 +576,7 @@ class FD extends Accounts
     }
 }
 
-class Credit_Card extends Accounts
-{
 
-
-    void printAccFunc() {
-        
-    }
-    void withdraw(double amount) {}
-}
 
 class Transaction {
     String time;
@@ -735,8 +734,6 @@ public class Main
         System.out.println("The following functionalities are available for your use:");
         System.out.println("1. Manage Accounts");
         System.out.println("2. Track Transactions");
-        // System.out.println("2. Budgeting");
-        // System.out.println("3. Debt Management");
         System.out.println("3. Log Out");
         System.out.println("4. Exit");
         System.out.println("Enter the appropriate Digit to proceed further");
