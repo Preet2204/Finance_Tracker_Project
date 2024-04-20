@@ -1,6 +1,6 @@
 import java.util.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.*;
+
 
 class User{
     ArrayList <Accounts> account_list=new ArrayList<>();    //will contain all the accounts a user will have
@@ -108,6 +108,7 @@ class User{
                     System.out.println("enter the maturity period in years you wawnt to choose for your FD account");
                     a.tenure=sca.nextInt();
                     a.interest_rate=(3.5 + a.balance/10000000 + a.tenure/4);
+                    a.last_date = LocalDate.now();
                     account_list.add(a);
                     System.out.println("You have successfully created an account. You have been redirected to the main menu!");
                     break;
@@ -118,6 +119,7 @@ class User{
             System.out.println("Enter Current Balance");
             double tempBalance=sca.nextDouble();
             a.balance=tempBalance;
+            a.last_date = LocalDate.now();
             account_list.add(a);
             System.out.println("You have successfully created an account. You have been redirected to the main menu!");
             
@@ -241,6 +243,10 @@ class User{
                     }
                 }
             }
+            case 3 -> {
+                Main.inupChoice();
+                return;
+            }
         };
     }
 
@@ -287,7 +293,7 @@ class User{
                     else if(ch >= 'A' && ch <= 'Z'){
                         hasUpper=true;
                     }
-                    else if(ch >= '0' && ch <= '9'){
+                    else if(ch > '0' && ch <= '9'){
                         hasDigit=true;
                     }
                 }
@@ -321,20 +327,22 @@ class User{
     double balance;
     double interest_rate;
     String account_no;
+    LocalDate last_date;
     ArrayList<Transaction> transactions = new ArrayList<>();
 
     Accounts()
     {
-        this.interest_rate=0.0;
-        this.account_no="";
-        this.balance=0.0;
-        this.minBalance=0.0;
+        this.interest_rate = 0.0;
+        this.account_no = "";
+        this.balance = 0.0;
+        this.minBalance = 0.0;
     }
 
     void deposit(double amount)
     {
         if(amount>0)
         {
+            calculateInterest();
             balance += amount;
             System.out.println("Your deposit has been completed. \nYour current balance is "+getBalance());
             Transaction temp = new Transaction(amount, balance, account_no, false);
@@ -354,6 +362,7 @@ class User{
             System.out.println("AAP UTNE AMIR NAHI HO");
         }
         else {
+            calculateInterest();
             balance -= amount;
             Transaction temp = new Transaction(amount, balance, account_no, true);
             transactions.add(temp);
@@ -365,6 +374,7 @@ class User{
     {
         return balance;
     }
+
     void printAccFunc(){
         System.out.println("The following are the functions you can perform on the selected account");
         System.out.println("1. Deposit money in Account.");
@@ -373,18 +383,19 @@ class User{
         System.out.println("4. Choose another account");
         System.out.println("5. Go Back to Main Menu");
     }
+
     protected void common_funcall(char inp){             //has switch to execute appropriate function as per the methods in printAccFunc 
         switch(inp)
         {
-            case 1 -> {
+            case '1' -> {
                 System.out.println("Enter the amount to be Deposited");
                 this.deposit(Main.sca.nextDouble());    //calls the deposit function of the account object created 
             }
-            case 2 -> {
+            case '2' -> {
                 System.out.println("Enter the amount to be Withdrawn");
                 this.withdraw(Main.sca.nextDouble());   //calls the withdraw function of the account object created 
             }
-            case 3 -> {
+            case '3' -> {
                 System.out.println("Your current Balance is "+getBalance()); 
                 try{                                    //adds a delay of 3 seconds after printing the balance of the account 
                     Thread.sleep(3000);
@@ -394,10 +405,10 @@ class User{
 
                 this.printAccFunc();                    //will return back to functionalities of the chosen ACCOUNT  
             }
-            case 4 -> {
+            case '4' -> {
                 Main.users.get(Main.index).AccountFunctions();  //goes to the functions of the chosen USER
             }
-            case 5 -> {
+            case '5' -> {
                 return;                                 //this will terminate all the recursive function calls and return the code to main 
             }
         }   
@@ -410,6 +421,21 @@ class User{
             this.transactions.get(i).printTrans();
         }
 
+    }
+
+    protected void calculateInterest() {
+        LocalDate now_date = LocalDate.now();
+        long daysdiff = DAYS.between(last_date, now_date);
+        double now_balan = balance;
+        
+        for(int i = 0; i < daysdiff; i++) {
+            now_balan = balance;
+            balance += interest_rate*(balance)/100;
+            diff = balance - now_balan;
+            Transaction temp = new Transaction(diff, balance, account_no, false);
+        }
+
+        last_date = now_date;
     }
     // abstract void transfer(double amount, String destination_acc_no);
     // abstract void getTransactionHistory();
@@ -433,7 +459,7 @@ class Savings extends Accounts
             System.out.println("Enter the appropriate choice");
             String choice = sca.next();
             sca.nextLine();
-            if(choice.charAt(0) >= '0' && choice.charAt(0) <= '5'){
+            if(choice.charAt(0) > '0' && choice.charAt(0) <= '5'){
                 super.common_funcall(choice.charAt(0));               //takes input from the static scanner object in Main class
                 break;
             } else {
@@ -454,11 +480,13 @@ class Savings extends Accounts
             int choice=Main.sca.nextInt();
             if(choice==0)
             {
+                calculateInterest();
                 balance-=(amount+500);
                 Transaction temp = new Transaction(amount, balance, account_no, true);
                 super.transactions.add(temp);
             }
         }else {
+            calculateInterest();
             balance -= amount;
             Transaction temp = new Transaction(amount, balance, account_no, true);
             super.transactions.add(temp);
@@ -484,7 +512,7 @@ class Checking extends Accounts
             System.out.println("Enter the appropriate choice");
             String choice = sca.next();
             sca.nextLine();
-            if(choice.charAt(0) >= '0' && choice.charAt(0) <= '5'){
+            if(choice.charAt(0) > '0' && choice.charAt(0) <= '5'){
                 super.common_funcall(choice.charAt(0));               //takes input from the static scanner object in Main class
                 break;
             } else {
@@ -497,7 +525,7 @@ class Checking extends Accounts
 
 class FD extends Accounts
 {
-  int tenure;   
+    int tenure;   
     
     public FD()
     {
@@ -510,7 +538,7 @@ class FD extends Accounts
             System.out.println("Enter the appropriate choice");
             String choice = sca.next();
             sca.nextLine();
-            if(choice.charAt(0) >= '0' && choice.charAt(0) <= '5'){
+            if(choice.charAt(0) > '0' && choice.charAt(0) <= '5'){
                 super.common_funcall(choice.charAt(0));               //takes input from the static scanner object in Main class
                 break;
             } else {
@@ -615,6 +643,20 @@ public class Main
     static ArrayList<User> users=new ArrayList<>();         //A dynamic list for all users.
     static int index;
     static Scanner sca = new Scanner(System.in);
+
+    // static String now_date() {
+    //     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("ddMMyyyy");
+    //     LocalDate currenDate = LocalDate.now();
+    //     String dateString = currenDate.format(dtf);
+    //     return dateString;
+    // }
+
+    // static day_diff(String day1, String day2) {
+    //     String temp1 = "" + day1.charAt(0) + day1.charAt(1);
+    //     String temp2 = "" + day2.charAt(0) + day2.charAt(1);
+    //     int day1num = Integer;
+    // }
+
     static void signup()
     {
         while(true){                                        //while loop iterates till the user enters a previously non existing username                                      
@@ -699,7 +741,7 @@ public class Main
                 if(signchoice.charAt(0) == '0') signup();
                 else if(signchoice.charAt(0) == '1') signin();
                 else{
-                    System.out.println("wrong input, enter again");
+                    System.out.println("Wrong Input, Enter Again");
                     continue;
                 }
             }else {
@@ -731,7 +773,7 @@ public class Main
 
     static char printFunctions()
     { 
-        System.out.println("Welcome");
+        System.out.println("Main Menu");
         System.out.println("The following functionalities are available for your use:");
         System.out.println("1. Manage Accounts");
         System.out.println("2. Track Transactions");
