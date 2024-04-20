@@ -134,6 +134,7 @@ class User{
         while(true)
         {
             System.out.println("Enter the account number of the account you wish to choose (enter -1 to go back)");
+            System.out.println("+++++++");
             String tempString=Main.sca.next();
             int i=0;                    //to store the index of the account the user wants to perform functions on
             if(tempString.equals("-1"))
@@ -323,7 +324,7 @@ class User{
     }
 }
 
- class Accounts
+class Accounts
 {
     //declaring the neccessary variables required
     int tenure;
@@ -356,7 +357,7 @@ class User{
         {
             System.out.println("\nThe entered amount to withdraw must be positive\n");
         }
-        this.printAccFunc();                                                            //returning back to the functions that can be performed on the given account
+        this.printAccFunc();                                                       //returning back to the functions that can be performed on the given account
     }
 
     void withdraw(double amount){
@@ -421,7 +422,7 @@ class User{
 
     void printTransactions() {
         Transaction.printTop();
-
+        System.out.println("----------------------------------------------------------------------------------------------------");
         for(int i = 0; i < transactions.size(); i++) {
             this.transactions.get(i).printTrans();
         }
@@ -444,10 +445,6 @@ class User{
 
         last_date = now_date;
     }
-    // abstract void transfer(double amount, String destination_acc_no);
-    // abstract void getTransactionHistory();
-    // abstract void addTransaction();
-    // abstract void calculateInterest();
 }
 
 class Savings extends Accounts
@@ -474,6 +471,7 @@ class Savings extends Accounts
             }
         }
     }
+
     void withdraw(double amount)
     {
         if((balance-amount)<0)
@@ -532,7 +530,7 @@ class Checking extends Accounts
 
 class FD extends Accounts
 {
-    int tenure;   
+    // int tenure;   
     
     public FD()
     {
@@ -577,7 +575,7 @@ class FD extends Accounts
                             this.withdraw(this.balance);
                             for(int i=0;i<Main.users.get(Main.index).account_list.size();i++)                   //searching for the index of the account in the list of accounts of the present user 
                             {
-                                if(Main.users.get(Main.index).account_list.account_no.equals(this.account_no)) 
+                                if(Main.users.get(Main.index).account_list.get(i).account_no.equals(this.account_no)) 
                                 {
                                     Main.users.get(Main.index).account_list.remove(i);                         //removes the account from the list     
                                     break;
@@ -699,7 +697,6 @@ public class Main
             
             boolean isUser = false;
             int i;                                                  //to store the value of the user index for which the user wants to sign in 
-            System.out.println(users.size());
             for(i = 0; i < users.size(); i++) {                     //searching for the user who has the input username
                 if(signuser.equals(users.get(i).getUserName())) {
                     isUser = true;                                  
@@ -731,12 +728,16 @@ public class Main
         return;
     }
 
-    static void inupChoice() {
+    static boolean inupChoice() {                                           //This function is made boolean to check if the User wants to exit the program.
         while(true)                                                         //while loop to iterate indefinitely till the user enter the correct input
         {
-            System.out.println("\nPress 0 to Sign Up or 1 to Sign In!\n");
+            System.out.println("\nPress 0 to Sign Up or 1 to Sign In!(Press -1 to Exit)\n");
             String signchoice = sca.next();
             sca.nextLine();
+
+            if(signchoice.equals("-1")) {
+                return true;
+            }
             
             
             if(signchoice.length() == 1){
@@ -752,21 +753,25 @@ public class Main
             }
             break;
         }
-        
-        
+        return false;        
     }
 
     public static void main(String[] args) {
 
         System.out.println("\nWelcome. ");
         
-        inupChoice();                                               //this method is called to take sign in or sign up from user 
+        if(inupChoice())                                               //this method is called to take sign in or sign up from user 
+        {
+            System.out.println("Exiting the Program....");
+            return;
+        }
 
         while(true) {                                               //this while loop continues to print functions till the user chooses to exit the program
             char choice = printFunctions();                         //all functions in the whole code will finally return here
             if(choice == '3') {                                     //if the user chooses to log out , they will be redirected to inup function
-                inupChoice();
+                if(inupChoice()) choice = '4';
             }
+
             if(choice == '4') {                                     //if user chooses to exit the program, we simply get out of the while loop :) 
                 System.out.println("Exiting the Program....");      
                 break;
